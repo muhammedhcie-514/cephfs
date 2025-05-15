@@ -1,0 +1,25 @@
+Step 1 Create resource pools.
+Create two replicated pools named data_cephfs and metadata_cephfs. data_cephfs is the
+data pool of CephFS, and metadata_cephfs is the metadata pool of CephFS.
+[ceph: root@ceph01 /]# ceph osd pool create metadata_cephfs
+[ceph: root@ceph01 /]# ceph osd pool create data_cephfs
+
+Step 2 Format the resource pools.
+Run the following command to format the created resource pools:
+[ceph: root@ceph01 /]# ceph fs new fs01 metadata_cephfs data_cephfs
+
+
+Step 3 Deploy the MDS.
+Deploy two MDSs in the Ceph cluster.
+[ceph: root@ceph01 /]# ceph orch apply mds fs01 --placement="2"
+
+After the deployment is complete, check the MDS status. The details are as follows:
+
+ceph orch ls
+
+Step 4 Create a user.
+Create user01 and grant it the read and write permissions on fs01.
+[ceph: root@ceph01 /]# ceph fs authorize fs01 client.user01 / rwps -o ceph.client.user01.keyring
+Check whether the configuration is correct.
+ceph
+

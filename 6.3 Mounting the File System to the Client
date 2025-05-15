@@ -1,0 +1,35 @@
+Mount CephFS to the /mnt/cephfs directory on the client and enable automatic
+mounting upon system startup.
+Step 1 Copy the keyring of user01 to the client.
+On the Ceph server, copy the keyring file of user01 generated in 6.2 to the /etc/ceph
+directory on the client.
+
+scp ceph.client.user01.keyring root@192.168.0.24:/etc/ceph
+
+Step 2 Create the authentication file.
+Create the authentication file user.txt and save the user information and key information
+in the file.
+[root@client ~]# echo "AQC7rSNlBesFBxAAeBhPod/SfnJxJNdrLo66YA==" > user.txt
+
+
+Step 3 Modify the /etc/fstab file.
+Add the following content to the /etc/fstab file:
+192.168.0.22:6789,192.168.0.23:6789:/ /mnt/cephfs ceph
+defaults,_netdev,name=user01,secretfile=/root/user.txt 0 0 
+
+Run mount -a to mount the file system, and then run mount to check whether the
+mounting is successful. The details are as follows:
+
+
+Try to create and delete files in /mnt/cephfs to check whether user01 has the read and
+write permissions on the resource pool.
+⚫ Question: What are 192.168.0.22 and 192.168.0.23 in the /etc/fstab file? Can they be
+replaced by other addresses?
+⚫ Answer: These IP addresses relate to the nodes where the MDS resides. These IP
+addresses need to be obtained from the Ceph management node after the MDS is
+deployed. In this exercise, the two addresses cannot be replaced. If a node is specified
+during MDS deployment or an MDS process is faulty, the system deploys the MDS on
+another node. In this case, the address needs to be replaced to ensure that the client
+can use CephFS.
+
+
